@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Options - Techspace Finance</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: #1f2937;
+            background: #f9fafb;
+            min-height: 100vh;
+            padding-bottom: 2rem;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        h1 {
+            color: #d946ef;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .greeting {
+            font-size: 1.1rem;
+            color: #4b5563;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.5s ease-out 0.1s backwards;
+        }
+
+        .loan-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .loan-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .loan-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .loan-amount {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #d946ef;
+            margin-bottom: 1.5rem;
+        }
+
+        .loan-details {
+            display: grid;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #6b7280;
+        }
+
+        .detail-value {
+            color: #1f2937;
+            font-weight: 500;
+        }
+
+        .tracking-number {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            word-break: break-all;
+        }
+
+        .btn-get-loan {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #d946ef 0%, #c026d3 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-get-loan:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(217, 70, 239, 0.4);
+        }
+
+        .no-options {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .no-options svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1rem;
+            color: #ef4444;
+        }
+
+        .no-options h2 {
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+
+        .no-options p {
+            color: #6b7280;
+            margin-bottom: 2rem;
+        }
+
+        .btn-back {
+            display: inline-block;
+            padding: 0.75rem 2rem;
+            background: #22c55e;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: #16a34a;
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .greeting {
+                font-size: 1rem;
+            }
+
+            .loan-amount {
+                font-size: 2rem;
+            }
+
+            .loan-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 17L12 22L22 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 12L12 17L22 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Techspace Finance
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Available Loan Options</h1>
+        <p class="greeting" id="greeting">Loading your loan options...</p>
+        <div class="loan-cards" id="loanCards"></div>
+    </div>
+
+    <script>
+        window.addEventListener('load', () => {
+            const savedData = localStorage.getItem('loanApplication');
+            
+            if (!savedData) {
+                window.location.href = 'eligibility.html';
+                return;
+            }
+
+            const data = JSON.parse(savedData);
+            
+            if (!data.loanOptions || data.loanOptions.length === 0) {
+                displayNoOptions(data);
+                return;
+            }
+
+            const greeting = document.getElementById('greeting');
+            greeting.textContent = `Dear ${data.fullName}, you qualify for a loan of up to KES ${data.maxLoan.toLocaleString()}. Please select your desired loan amount to complete your application.`;
+
+            const loanCardsContainer = document.getElementById('loanCards');
+            
+            data.loanOptions.forEach((loan, index) => {
+                const card = document.createElement('div');
+                card.className = 'loan-card';
+                card.style.animationDelay = `${index * 0.1}s`;
+                
+                card.innerHTML = `
+                    <div class="loan-amount">KES ${loan.amount.toLocaleString()}</div>
+                    <div class="loan-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Full Name:</span>
+                            <span class="detail-value">${data.fullName}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">National ID:</span>
+                            <span class="detail-value">${data.nationalId}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Loan Tracking Number:</span>
+                            <span class="detail-value tracking-number">${loan.trackingNumber}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Interest Rate:</span>
+                            <span class="detail-value">${loan.interestRate}%</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Service Fee:</span>
+                            <span class="detail-value">KES ${loan.serviceFee.toLocaleString()}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Repayment Period:</span>
+                            <span class="detail-value">${loan.repaymentPeriod} days</span>
+                        </div>
+                    </div>
+                    <button class="btn-get-loan" onclick="selectLoan(${index})">Get Loan Now</button>
+                `;
+                
+                loanCardsContainer.appendChild(card);
+            });
+        });
+
+        function displayNoOptions(data) {
+            const greeting = document.getElementById('greeting');
+            greeting.style.display = 'none';
+            
+            const loanCardsContainer = document.getElementById('loanCards');
+            loanCardsContainer.innerHTML = `
+                <div class="no-options">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                        <path d="M15 9L9 15M9 9L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <h2>No Loan Options Available</h2>
+                    <p>Unfortunately, based on your current profile, we are unable to offer you a loan at this time. Please try again later or update your information.</p>
+                    <a href="index.html" class="btn-back">Back to Home</a>
+                </div>
+            `;
+        }
+
+        function selectLoan(index) {
+            const savedData = localStorage.getItem('loanApplication');
+            const data = JSON.parse(savedData);
+            
+            data.selectedLoan = data.loanOptions[index];
+            data.selectedLoan.disbursableAmount = data.selectedLoan.amount - data.selectedLoan.serviceFee;
+            
+            localStorage.setItem('loanApplication', JSON.stringify(data));
+            
+            window.location.href = 'process-loan.html';
+        }
+    </script>
+</body>
+</html>
