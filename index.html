@@ -790,7 +790,7 @@
   <script>
     // Configuration - Update these with your serverless function URLs
     const API_ENDPOINTS = {
-      initiatePayment: '/api/initiate-payment', // Your PayHero endpoint
+      initiatePayment: '/pay', // Your PayHero endpoint
       verifyPayment: '/api/verify-payment',
       normalizePhone: '/api/normalize-phone'
     };
@@ -1182,7 +1182,7 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            phone_number: phoneNumber,
+            phone: phoneNumber,
             amount: amount,
             loan_amount: loanAmount,
             id_number: idNumber,
