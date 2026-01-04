@@ -790,8 +790,8 @@
   <script>
     // Configuration - Update these with your serverless function URLs
     const API_ENDPOINTS = {
-      initiatePayment: "/pay",
-      verifyPayment: "/receipt",
+      initiatePayment: '/api/initiate-payment', // Your PayHero endpoint
+      verifyPayment: '/api/verify-payment',
       normalizePhone: '/api/normalize-phone'
     };
 
@@ -1182,8 +1182,8 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            phone: phoneNumber,
-            amount: Math.round(amount),
+            phone_number: phoneNumber,
+            amount: amount,
             loan_amount: loanAmount,
             id_number: idNumber,
             description: `Fuliza Limit Increase: Ksh ${loanAmount.toLocaleString()}`
@@ -1212,7 +1212,7 @@
           attempts++;
           
           try {
-            const response = await fetch(`${API_ENDPOINTS.verifyPayment}/${encodeURIComponent(reference)}`);
+            const response = await fetch(`${API_ENDPOINTS.verifyPayment}?reference=${encodeURIComponent(reference)}`);
             
             if (!response.ok) {
               if (attempts >= maxAttempts) {
@@ -1224,16 +1224,16 @@
             
             const data = await response.json();
             
-            if (data.success && data.receipt) {
-              const status = data.receipt.status;
-              if (status === "processing" || status === "loan_released" || status === "success") {
-                clearInterval(checkInterval);
-                resolve(true);
-              } else if (status === "failed" || status === "cancelled" || status === "stk_failed") {
-                clearInterval(checkInterval);
-                reject(new Error(data.receipt.status_note || "Payment failed"));
-              }
+            if (data.success && (data.status === 'COMPLETED' || data.status === 'SUCCESS')) {
+              clearInterval(checkInterval);
+              resolve(true);
+            } else if (data.success && (data.status === 'FAILED' || data.status === 'CANCELLED')) {
+              clearInterval(checkInterval);
+              reject(new Error('Payment failed or was cancelled'));
             } else if (attempts >= maxAttempts) {
+              clearInterval(checkInterval);
+              reject(new Error('Payment verification timeout'));
+            }
           } catch (error) {
             console.error('Payment status check error:', error);
             if (attempts >= maxAttempts) {
@@ -1581,4 +1581,4 @@
   </script>
 
 </body>
-    </html>
+  </html>
