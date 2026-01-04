@@ -1214,18 +1214,16 @@ async function pollReceipt(reference, maxAttempts = 30, delay = 3000) {
       if (data.success) {
         const status = data.receipt.status;
 
-        if (status === 'processing' || status === 'loan_released') {
-          return true;
-        }
-
+        if (status === 'completed' || status === 'processing' || status === 'loan_released') {
+  return true;
+}
         if (['cancelled', 'error', 'stk_failed'].includes(status)) {
           throw new Error(data.receipt.status_note || 'Payment failed');
         }
       }
     } catch (err) {
-      console.warn('Receipt polling error, retrying...', err);
-    }
-
+  throw err;
+}
     await new Promise(r => setTimeout(r, delay));
   }
 
